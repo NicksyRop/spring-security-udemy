@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - include:
+      file: /migration/user-schema-changelog.yml
+      relativeToChangelogFile: true
+
+  - include:
+      file: /migration/ix-index-changelog.yml
+      relativeToChangelogFile: true

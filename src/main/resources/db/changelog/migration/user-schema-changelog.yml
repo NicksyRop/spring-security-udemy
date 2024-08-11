@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: db_and_schema_20240807_1
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/db-schema/users-authorities-schema.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
+  - changeSet:
+      id: db_seeder_20240807_4
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/seeder/users_seeder.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
+
+  - changeSet:
+      id: db_seeder_20240807_3
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/seeder/authorities_seeder.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
+

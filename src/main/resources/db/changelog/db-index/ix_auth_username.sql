@@ -1,0 +1,1 @@
+create unique index ix_auth_username on authorities (username,authority);
