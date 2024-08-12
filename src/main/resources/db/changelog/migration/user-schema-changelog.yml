@@ -37,3 +37,29 @@ databaseChangeLog:
           endDelimiter: $$
           splitStatements: true
 
+  - changeSet:
+      id: db_and_schema_20240807_5
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/db-schema/customer_schema.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
+
+  - changeSet:
+      id: db_seeder_20240807_6
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/seeder/customer_seeder.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
+
