@@ -4,8 +4,7 @@ server:
 ##Logging level TRACE so we include all levels i.e warn , info etc
 logging:
   level:
-    org.springframework: TRACE
-
+    org.springframework: ERROR
 
 #####Secuirty related properties
 ##### https://docs.spring.io/spring-boot/appendix/application-properties/index.html#appendix.application-properties.security
@@ -13,14 +12,15 @@ logging:
     user:
       name: user
       password: 6c752f81-e876-467e-bd7c-66ce9460be1d-generic
-######Active profiles set up
+
+#####Database
+##### search for 'users.ddl' - schema definition for users when using JdbcUserDetailsManager
 spring:
-  config:
-    import: classpath:application_prod.yml
-  profiles:
-    active: prod #or  default
-    #####Database
-    ##### search for 'users.ddl' - schema definition for users when using JdbcUserDetailsManager
+
+#  config:
+#    activate:
+#      on-profile: prod
+
   datasource:
     url: jdbc:postgresql://localhost:5432/spring-security
     username: postgres
@@ -36,9 +36,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_schema: public
-        format_sql: true #turn off on prod
-        show_sql: true
-
+        format_sql: false
+        show_sql: false
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
@@ -47,3 +46,4 @@ spring:
     enabled: true
     default-schema: public
     liquibase-schema: public
+

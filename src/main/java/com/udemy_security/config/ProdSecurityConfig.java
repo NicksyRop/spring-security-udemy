@@ -13,8 +13,8 @@ import org.springframework.security.web.authentication.password.HaveIBeenPwnedRe
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
-@Profile("!prod")
-public class SecurityConfig {
+@Profile("prod")
+public class ProdSecurityConfig {
     // See SpringBootWebSecurityConfiguration.class for default filter implementation
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -22,8 +22,8 @@ public class SecurityConfig {
         // http.authorizeHttpRequests((requests) -> requests.anyRequest().denyAll());
         // http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
         //todo: use request matchers to group and protect(authenticated) /permit all
-        http.requiresChannel(rcc -> rcc.anyRequest().requiresInsecure()) // allow http/https for not production environment
-        .csrf(csrfConfig -> csrfConfig.disable())  //disable csrf verification
+        http.requiresChannel(rcc -> rcc.anyRequest().requiresSecure()) //only process https requests alone
+                .csrf(csrfConfig -> csrfConfig.disable())  //disable csrf verification
                 .authorizeHttpRequests((requests) -> requests.requestMatchers(
                 "/myAccount","/myLoans","/myCards","/myBalance").authenticated()
                 .requestMatchers("/contact","/notices","/error" ,"/register", "/compromised").permitAll());

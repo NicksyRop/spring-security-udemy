@@ -5,9 +5,7 @@ import com.udemy_security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,5 +15,10 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<String> createUser(@RequestBody Customer customer) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createNewCustomer(customer));
+    }
+
+    @GetMapping("/compromised")
+    public ResponseEntity<Boolean> getCompromisedUsers(@RequestParam String password) {
+        return ResponseEntity.ok().body(userService.isCompromisedPassword(password));
     }
 }
