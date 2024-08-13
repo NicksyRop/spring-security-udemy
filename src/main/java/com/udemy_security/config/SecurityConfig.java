@@ -1,5 +1,7 @@
 package com.udemy_security.config;
 
+import com.udemy_security.exceptions.CustomAccessDeniedEntryPoint;
+import com.udemy_security.exceptions.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -31,7 +33,8 @@ public class SecurityConfig {
         //todo: disable form login and basic auth
         //http.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.disable());
         //http.httpBasic(httpSecurityHttpBasicConfigurer ->  httpSecurityHttpBasicConfigurer.disable());
-        http.httpBasic(withDefaults());
+        http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint())); //todo: withDefaults() throw the default error message , inject own custom error DOES NOT WORK WITH 403 use global
+        http.exceptionHandling(ehg -> ehg.accessDeniedHandler(new CustomAccessDeniedEntryPoint())); // sets this globally on the application
         http.formLogin(withDefaults());
         return http.build();
     }
