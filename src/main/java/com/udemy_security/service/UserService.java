@@ -14,10 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,15 +36,12 @@ public class UserService {
         customer.setPassword(hashedPassword);
         customer.setEmail(customerRequestDto.getEmail());
         customer.setRole(customerRequestDto.getRole());
-        Set<Authority> newAuthorities = new HashSet<>();
+        List<Authority> newAuthorities = new ArrayList<>();
         for (AuthorityDto authorityDto : customerRequestDto.getAuthorities()) {
             Optional<Authority> optionalAuthority = authorityRepository.findByName(authorityDto.getName());
             optionalAuthority.ifPresent(newAuthorities::add);
         }
-        if (customer.getAuthorities() == null) {
-            customer.setAuthorities(new ArrayList<>());
-        }
-        customer.getAuthorities().addAll(newAuthorities);
+        customer.setAuthorities(newAuthorities);
         try {
             customerRepository.save(customer);
         }catch (Exception e) {
