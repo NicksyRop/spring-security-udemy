@@ -1,5 +1,9 @@
 server:
   port: 8000
+  ## set security session timeouts to 20 minutes
+  servlet:
+    session:
+      timeout: 5m # 2 min is the least springboot allows
 
 ##Logging level TRACE so we include all levels i.e warn , info etc
 logging:
@@ -37,7 +41,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_schema: public
         format_sql: false
-        show_sql: false
+        show_sql: true #turn to false on production
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 

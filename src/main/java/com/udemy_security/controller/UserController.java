@@ -1,5 +1,6 @@
 package com.udemy_security.controller;
 
+import com.udemy_security.dto.CustomerRequestDto;
 import com.udemy_security.entity.Customer;
 import com.udemy_security.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> createUser(@RequestBody Customer customer) {
+    public ResponseEntity<String> createUser(@RequestBody CustomerRequestDto customer) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createNewCustomer(customer));
     }
 
