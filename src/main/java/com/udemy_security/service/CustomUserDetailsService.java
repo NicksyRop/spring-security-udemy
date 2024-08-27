@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
        Customer customer =  customerRepository.findByEmail(username).orElseThrow(() ->
                 new UsernameNotFoundException("User details  not found , with username: " + username));
-       log.info("Customer : {}", customer);
+    //   log.info("Customer : {}", customer);
        //use streams to create SimpleGrantedAuthority from each authority
         List<SimpleGrantedAuthority> grantedAuthorities = customer.getAuthorities().stream().map(authority -> new SimpleGrantedAuthority(authority.getName())).collect(Collectors.toList());
        //create user object from the customer

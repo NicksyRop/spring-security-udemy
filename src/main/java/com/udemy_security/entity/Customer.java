@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,5 +23,5 @@ public class Customer {
     private String role;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer", fetch = FetchType.EAGER)
     @JsonIgnore
-    private Set<Authority> authorities = new HashSet<>();
+    private List<Authority> authorities = new ArrayList<>();
 }

@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class UserService {
             optionalAuthority.ifPresent(newAuthorities::add);
         }
         if (customer.getAuthorities() == null) {
-            customer.setAuthorities(new HashSet<>());
+            customer.setAuthorities(new ArrayList<>());
         }
         customer.getAuthorities().addAll(newAuthorities);
         try {
