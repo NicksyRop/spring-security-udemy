@@ -30,8 +30,13 @@ public class SecurityConfig {
                         //.authenticates allows anyone to access resource as long as user is logged in
                        // .requestMatchers("/myAccount","/myLoans","/myCards","/myBalance").authenticated()
                         //.hasAuthority checks if a logged in user has permission to access the resource
-                        .requestMatchers("/myAccount").authenticated()
-                        .requestMatchers("/myBalance").hasAnyAuthority("VIEWBALANCE","VIEWACCOUNT")
+                        //hasAnyAuthority accepts a list of authorities
+//                        .requestMatchers("/myAccount").authenticated()
+//                        .requestMatchers("/myBalance").hasAnyAuthority("VIEWBALANCE","VIEWACCOUNT")
+//                        .requestMatchers("/myLoans").hasAuthority("VIEWLOANS")
+//                        .requestMatchers("/myCards").hasAuthority("VIEWCARDS")
+                        .requestMatchers("/myAccount").hasAnyAuthority("VIEWBALANCE","VIEWACCOUNT")
+                        .requestMatchers("/myBalance").hasRole("ADMIN") //todo : for role remove the ROLE prefix as stored in the db  can also use hasAnyRole for list
                         .requestMatchers("/myLoans").hasAuthority("VIEWLOANS")
                         .requestMatchers("/myCards").hasAuthority("VIEWCARDS")
                         .requestMatchers("/user").authenticated()
