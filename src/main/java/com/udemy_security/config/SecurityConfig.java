@@ -26,9 +26,16 @@ public class SecurityConfig {
         //todo: use request matchers to group and protect(authenticated) /permit all
         http.requiresChannel(rcc -> rcc.anyRequest().requiresInsecure()) // allow http/https for not production environment
         .csrf(csrfConfig -> csrfConfig.disable())  //disable csrf verification
-                .authorizeHttpRequests((requests) -> requests.requestMatchers(
-                "/myAccount","/myLoans","/myCards","/myBalance").authenticated()
-                .requestMatchers("/contact","/notices","/error" ,"/register", "/compromised").permitAll());
+                .authorizeHttpRequests((requests) -> requests
+                        //.authenticates allows anyone to access resource as long as user is logged in
+                       // .requestMatchers("/myAccount","/myLoans","/myCards","/myBalance").authenticated()
+                        //.hasAuthority checks if a logged in user has permission to access the resource
+                        .requestMatchers("/myAccount").authenticated()
+                        .requestMatchers("/myBalance").hasAnyAuthority("VIEWBALANCE","VIEWACCOUNT")
+                        .requestMatchers("/myLoans").hasAuthority("VIEWLOANS")
+                        .requestMatchers("/myCards").hasAuthority("VIEWCARDS")
+                        .requestMatchers("/user").authenticated()
+                        .requestMatchers("/contact","/notices","/error" ,"/register", "/compromised").permitAll());
 
         //todo: disable form login and basic auth
         //http.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.disable());

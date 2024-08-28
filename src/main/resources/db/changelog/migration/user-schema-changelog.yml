@@ -89,4 +89,81 @@ databaseChangeLog:
           relativeToChangelogFile: false
           endDelimiter: $$
           splitStatements: true
+  - changeSet:
+      id: db_and_schema_20240828_2
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/db-schema/accounts_schema.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
+
+  - changeSet:
+      id: db_and_schema_20240828_1
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/db-schema/account_transaction_schema.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
+
+  - changeSet:
+      id: db_seeder_20240828_1
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/seeder/accounts_seeder.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
+
+  - changeSet:
+      id: db_seeder_20240828_2
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/seeder/account_transactions_seeder.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
+
+  - changeSet:
+      id: db_and_schema_20240828_3
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/db-schema/loans_schema.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
+
+  - changeSet:
+      id: db_seeder_20240828_3
+      author: Nickson Kipkorir
+      runOnChange: false
+      runInTransaction: true
+      changes:
+        sqlFile:
+          path: classpath:/db/changelog/seeder/loans_seeder.sql
+          encoding: UTF-8
+          relativeToChangelogFile: false
+          endDelimiter: $$
+          splitStatements: true
 

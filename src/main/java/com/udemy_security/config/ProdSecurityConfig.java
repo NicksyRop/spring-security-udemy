@@ -25,8 +25,12 @@ public class ProdSecurityConfig {
         //todo: use request matchers to group and protect(authenticated) /permit all
         http.requiresChannel(rcc -> rcc.anyRequest().requiresInsecure()) //only process https requests alone
                 .csrf(csrfConfig -> csrfConfig.disable())  //disable csrf verification
-                .authorizeHttpRequests((requests) -> requests.requestMatchers(
-                "/myAccount","/myLoans","/myCards","/myBalance").authenticated()
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/myAccount").hasAuthority("VIEWACCOUNT")
+                        .requestMatchers("/myBalance").hasAnyAuthority("VIEWBALANCE","VIEWACCOUNT")
+                        .requestMatchers("/myLoans").hasAuthority("VIEWLOANS")
+                        .requestMatchers("/myCards").hasAuthority("VIEWCARDS")
+                        .requestMatchers("/user").authenticated()
                 .requestMatchers("/contact","/notices","/error" ,"/register", "/compromised").permitAll());
 
         //todo: disable form login and basic auth
