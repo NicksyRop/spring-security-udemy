@@ -1,5 +1,6 @@
 package com.udemy_security.config;
 
+import com.udemy_security.config.filter.AuthoritiesLoggingAfterFilter;
 import com.udemy_security.config.filter.RequestValidationBeforeFilter;
 import com.udemy_security.exceptions.CustomAccessDeniedEntryPoint;
 import com.udemy_security.exceptions.CustomBasicAuthenticationEntryPoint;
@@ -27,7 +28,8 @@ public class SecurityConfig {
         // http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
         //todo: use request matchers to group and protect(authenticated) /permit all
         http.requiresChannel(rcc -> rcc.anyRequest().requiresInsecure()) // allow http/https for not production environment
-                .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class) //custom filter
+                .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class) //custom filter before auth
+                .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
         .csrf(csrfConfig -> csrfConfig.disable())  //disable csrf verification
                 .authorizeHttpRequests((requests) -> requests
                         //.authenticates allows anyone to access resource as long as user is logged in
