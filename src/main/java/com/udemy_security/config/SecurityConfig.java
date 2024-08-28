@@ -1,5 +1,6 @@
 package com.udemy_security.config;
 
+import com.udemy_security.config.filter.RequestValidationBeforeFilter;
 import com.udemy_security.exceptions.CustomAccessDeniedEntryPoint;
 import com.udemy_security.exceptions.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -25,6 +27,7 @@ public class SecurityConfig {
         // http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
         //todo: use request matchers to group and protect(authenticated) /permit all
         http.requiresChannel(rcc -> rcc.anyRequest().requiresInsecure()) // allow http/https for not production environment
+                .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class) //custom filter
         .csrf(csrfConfig -> csrfConfig.disable())  //disable csrf verification
                 .authorizeHttpRequests((requests) -> requests
                         //.authenticates allows anyone to access resource as long as user is logged in
