@@ -1,6 +1,8 @@
 package com.udemy_security.config;
 
 import com.udemy_security.config.filter.AuthoritiesLoggingAfterFilter;
+import com.udemy_security.config.filter.JWTTokenGeneratorFilter;
+import com.udemy_security.config.filter.JWTTokenValidatorFilter;
 import com.udemy_security.config.filter.RequestValidationBeforeFilter;
 import com.udemy_security.exceptions.CustomAccessDeniedEntryPoint;
 import com.udemy_security.exceptions.CustomBasicAuthenticationEntryPoint;
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,7 +33,10 @@ public class SecurityConfig {
         http.requiresChannel(rcc -> rcc.anyRequest().requiresInsecure()) // allow http/https for not production environment
                 .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class) //custom filter before auth
                 .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class) //todo: generate JWT after login
+                .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class) //todo: validate token before login
         .csrf(csrfConfig -> csrfConfig.disable())  //disable csrf verification
+                .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //todo so we use JWT
                 .authorizeHttpRequests((requests) -> requests
                         //.authenticates allows anyone to access resource as long as user is logged in
                        // .requestMatchers("/myAccount","/myLoans","/myCards","/myBalance").authenticated()
