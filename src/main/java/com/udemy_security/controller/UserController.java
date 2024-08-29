@@ -24,7 +24,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createNewCustomer(customer));
     }
 
-    @RequestMapping("/user")
+    @GetMapping("/user")
     public Customer getUserDetailsAfterLogin(Authentication authentication) {
         Optional<Customer> optionalCustomer = customerRepository.findByEmail(authentication.getName());
         return optionalCustomer.orElse(null);
