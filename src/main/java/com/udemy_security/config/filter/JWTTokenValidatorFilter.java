@@ -2,12 +2,15 @@ package com.udemy_security.config.filter;
 
 import com.udemy_security.constants.ApplicationConstants;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +28,7 @@ import java.nio.charset.StandardCharsets;
  * created 29/08/2024
  */
 
+@Slf4j
 public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -48,8 +52,15 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                     }
                 }
                  
-
+            //todo here we can catch all the exceptions like  token expired , invalid token etc
             }catch (Exception e) {
+                if( e instanceof ExpiredJwtException){
+                    log.error("Token expired.");
+                }
+
+                if(e instanceof SignatureException){
+                    log.error("Invalid JWT token.");
+                }
                 throw new BadCredentialsException("Invalid JWT token");
             }
         }
