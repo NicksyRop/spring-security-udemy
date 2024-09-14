@@ -51,7 +51,7 @@ public class SecurityConfig {
 //                        .requestMatchers("/myCards").hasAuthority("VIEWCARDS")
                         .requestMatchers("/myAccount").hasAnyAuthority("VIEWBALANCE","VIEWACCOUNT")
                         .requestMatchers("/myBalance").hasRole("ADMIN") //todo : for role remove the ROLE prefix as stored in the db  can also use hasAnyRole for list
-                        .requestMatchers("/myLoans").hasAuthority("VIEWLOANS")
+                        .requestMatchers("/myLoans").authenticated() //todo : use method level security
                         .requestMatchers("/myCards").hasAuthority("VIEWCARDS")
                         .requestMatchers("/user").authenticated()
                         .requestMatchers("/contact","/notices","/error" ,"/register", "/compromised", "/apiLogin").permitAll());
