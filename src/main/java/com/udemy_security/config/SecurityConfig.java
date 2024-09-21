@@ -1,27 +1,13 @@
 package com.udemy_security.config;
 
-import com.udemy_security.config.filter.AuthoritiesLoggingAfterFilter;
-import com.udemy_security.config.filter.JWTTokenGeneratorFilter;
-import com.udemy_security.config.filter.JWTTokenValidatorFilter;
-import com.udemy_security.config.filter.RequestValidationBeforeFilter;
 import com.udemy_security.exceptions.CustomAccessDeniedEntryPoint;
-import com.udemy_security.exceptions.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @Profile("!prod")
@@ -29,15 +15,19 @@ public class SecurityConfig {
     // See SpringBootWebSecurityConfiguration.class for default filter implementation
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
         //todo: use any request to block or allow all ( authenticated )
         // http.authorizeHttpRequests((requests) -> requests.anyRequest().denyAll());
         // http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
         //todo: use request matchers to group and protect(authenticated) /permit all
         http.requiresChannel(rcc -> rcc.anyRequest().requiresInsecure()) // allow http/https for not production environment
-                .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class) //custom filter before auth
-                .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
-                .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class) //todo: generate JWT after login
-                .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class) //todo: validate token before login
+             //   .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class) //custom filter before auth
+             //   .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
+                //todo : remove this since logic to generate token is left for keycloack
+              //  .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class) //todo: generate JWT after login
+              //  .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class) //todo: validate token before login
         .csrf(csrfConfig -> csrfConfig.disable())  //disable csrf verification
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //todo so we use JWT
                 .authorizeHttpRequests((requests) -> requests
@@ -49,19 +39,20 @@ public class SecurityConfig {
 //                        .requestMatchers("/myBalance").hasAnyAuthority("VIEWBALANCE","VIEWACCOUNT")
 //                        .requestMatchers("/myLoans").hasAuthority("VIEWLOANS")
 //                        .requestMatchers("/myCards").hasAuthority("VIEWCARDS")
-                        .requestMatchers("/myAccount").hasAnyAuthority("VIEWBALANCE","VIEWACCOUNT")
+                        .requestMatchers("/myAccount").hasAnyRole("VIEWBALANCE","VIEWACCOUNT")
                         .requestMatchers("/myBalance").hasRole("ADMIN") //todo : for role remove the ROLE prefix as stored in the db  can also use hasAnyRole for list
                         .requestMatchers("/myLoans").authenticated() //todo : use method level security
-                        .requestMatchers("/myCards").hasAuthority("VIEWCARDS")
+                        .requestMatchers("/myCards").hasRole("VIEWCARDS")
                         .requestMatchers("/user").authenticated()
                         .requestMatchers("/contact","/notices","/error" ,"/register", "/compromised", "/apiLogin").permitAll());
 
         //todo: disable form login and basic auth
         //http.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.disable());
         //http.httpBasic(httpSecurityHttpBasicConfigurer ->  httpSecurityHttpBasicConfigurer.disable());
-        http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint())); //todo: withDefaults() throw the default error message , inject own custom error DOES NOT WORK WITH 403 use global
+        //http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint())); //todo: withDefaults() throw the default error message , inject own custom error DOES NOT WORK WITH 403 use global
         http.exceptionHandling(ehg -> ehg.accessDeniedHandler(new CustomAccessDeniedEntryPoint())); // sets this globally on the application
-        http.formLogin(withDefaults());
+       // http.formLogin(withDefaults()); //todo - remove form login and http basic since we want the service to be a resource server - only micro-service communication
+        http.oauth2ResourceServer(rsc  -> rsc.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter)));
         return http.build();
     }
 
@@ -91,27 +82,27 @@ public class SecurityConfig {
 //        return new JdbcUserDetailsManager(dataSource);
 //    }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        // use this factory so spring can choose with mechanism to use to hash passwords (spring recommends bcrypt)
-        // so in case spring changes the recommended hashing we don't have to update our code i.e  return new BCryptPasswordEncoder();
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        // use this factory so spring can choose with mechanism to use to hash passwords (spring recommends bcrypt)
+//        // so in case spring changes the recommended hashing we don't have to update our code i.e  return new BCryptPasswordEncoder();
+//        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//    }
 
     /**
      * checks if password is compromised or not
      * @return
      */
-    @Bean
-    public CompromisedPasswordChecker compromisedPasswordChecker(){
-        return new HaveIBeenPwnedRestApiPasswordChecker();
-    }
+//    @Bean
+//    public CompromisedPasswordChecker compromisedPasswordChecker(){
+//        return new HaveIBeenPwnedRestApiPasswordChecker();
+//    }
 
-    @Bean
-    AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        CustomAuthenticationProvider authenticationProvider = new CustomAuthenticationProvider(userDetailsService,passwordEncoder);
-        ProviderManager providerManager = new ProviderManager(authenticationProvider);
-        providerManager.setEraseCredentialsAfterAuthentication(false);
-        return providerManager;
-    }
+//    @Bean
+//    AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+//        CustomAuthenticationProvider authenticationProvider = new CustomAuthenticationProvider(userDetailsService,passwordEncoder);
+//        ProviderManager providerManager = new ProviderManager(authenticationProvider);
+//        providerManager.setEraseCredentialsAfterAuthentication(false);
+//        return providerManager;
+//    }
 }

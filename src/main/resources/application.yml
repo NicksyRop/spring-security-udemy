@@ -20,6 +20,15 @@ logging:
       password: 6c752f81-e876-467e-bd7c-66ce9460be1d-generic
 ######Active profiles set up
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8082/realms/SecurityUdemy/protocol/openid-connect/certs #todo: add this to validate token (public key location)
+#        opaquetoken: #todo: when using opaque tokens
+#          client-id: udemysecurity
+#          client-secret: j499Ie0N7kI8cn37BzQU46LR6KBUA8LQ
+#          introspection-uri: http://localhost:8082/realms/SecurityUdemy/protocol/openid-connect/token/introspect
   config:
     import: classpath:application_prod.yml
   profiles:
@@ -56,3 +65,5 @@ spring:
 security:
   jwt:
     secret-key: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+
+
