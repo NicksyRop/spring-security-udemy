@@ -24,7 +24,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8082/realms/SecurityUdemy/protocol/openid-connect/certs #todo: add this to validate token (public key location)
+         # jwk-set-uri: http://localhost:8082/realms/SecurityUdemy/protocol/openid-connect/certs #todo: add this to validate token (public key location)
+          jwk-set-uri: http://localhost:9000/oauth2/jwks
 #        opaquetoken: #todo: when using opaque tokens
 #          client-id: udemysecurity
 #          client-secret: j499Ie0N7kI8cn37BzQU46LR6KBUA8LQ
